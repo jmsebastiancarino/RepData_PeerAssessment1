@@ -1,25 +1,106 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+## Course Project: Personal Movement 
+Loading and reprocessing the data
+```{r, echo=TRUE, results="hide", cache=TRUE}
+md <- read.csv("activity.csv", header=TRUE)
+library(ggplot2)
+library(lattice)
+library(dplyr)
+md$date <- as.Date(as.character(md$date), "%Y-%m-%d")
+```
+
+####What is mean total number of steps taken per day?
+```{r Calculation, echo=TRUE, cache=TRUE }
+##Calculation of total, mean, and median
+total <- with(md, tapply(steps, date, na.rm=TRUE, FUN=sum))
+mean <- with(md, tapply(steps, date, na.rm=TRUE, FUN=mean))
+median <- with(md, tapply(steps, date, na.rm=TRUE, FUN=median))
+
+##Making the histogram and showing the mean per day
+hist(total, col="green", main="Total Number of Steps Taken")
+```
 
 
-## Loading and preprocessing the data
+The mean total number of steps taken per day is as follows: 
+```{r mean, echo=TRUE, cache=FALSE}
+mean
+```
+####What is the average daily activity pattern?
+```{r Average, echo=TRUE, cache=TRUE}
+##Calculation of  average daily activity pattern
+ave <- with(md, aggregate(steps, list(interval), na.rm=TRUE, FUN=mean))
+
+##Plotting the average
+plot(ave, col="brown", type="l", ylab="Average Steps", xlab="5 Minute Interval")
+```
+
+
+The peak or maximum of the average number of steps taken is on the interval between 800 and 1000. This is explained by the time of the interval which is morning where people are highly locomotive and active since they incur a large number of steps taken in various activities such as going to work or school, attending to daily errands, and/or having a morning exercise at the gym or parks.
 
 
 
-## What is mean total number of steps taken per day?
+
+####Imputing missing values
+```{r total number of missing values, echo=TRUE, result="hide", cache=TRUE}
+##Imputing Missing Values
+
+	##Total Number of Rows with Missing Values
+	missing <- sum(is.na(md))
+```
+The total number of rows with missing values is `r missing`.
+```{r NA replacement, echo=TRUE, results="hide", cache=TRUE}
+##Create New Data Set
+	md2 <- md
+
+##Fill in of the missing values with their mean
+  library(zoo)
+  md2[] <- lapply(md2, na.aggregate) 
+	
+```
+
+```{r new results, echo=TRUE, cache=TRUE}
+##Calculation of total, mean, and median
+total2 <- with(md2, tapply(steps, date, FUN=sum))
+mean2 <- with(md2, tapply(steps, date, FUN=mean))
+median2 <- with(md2, tapply(steps, date, FUN=median))
+
+##Plotting the total number of steps taken
+hist(total2, col="green", main="Total Number of Steps Taken")
+```
+
+The insertion of values in place of NA values has increased the total daily number of steps taken. The difference can be seen from the left side and the middle of the new histogram as the frequency has increased from 25 to 35 while the right side has little increase.  
 
 
 
-## What is the average daily activity pattern?
+
+####Are there differences in activity patterns between weekdays and weekends?
+```{r differences, echo=TRUE, cache=TRUE}
+##Create a new column for weekdays and weekends
+	md2$Day <- weekdays(md2$date)
+
+##Identification for each observation
+	md2$Day[which(md2$Day == "Monday")] <- "Weekdays"
+	md2$Day[which(md2$Day == "Tuesday")] <- "Weekdays"
+	md2$Day[which(md2$Day == "Wednesday")] <- "Weekdays"
+	md2$Day[which(md2$Day == "Thursday")] <- "Weekdays"
+	md2$Day[which(md2$Day == "Friday")] <- "Weekdays"
+	md2$Day[which(md2$Day == "Saturday")] <- "Weekends"
+	md2$Day[which(md2$Day == "Sunday")] <- "Weekends"
+
+##Subsetting the weekends and weekdays
+	Day <- subset(md2, Day == "Weekdays")
+	End <- subset(md2, Day == "Weekends")
+
+##Calculating the mean of weekends and weekdays
+	ave1 <- with(Day, aggregate(steps, list(interval), na.rm=TRUE, FUN=mean))
+	ave2 <- with(End, aggregate(steps, list(interval), na.rm=TRUE, FUN=mean))
+
+##Plotting the mean of weekends and weekdays
+	par(mfrow=c(2,1), mar=c(4,4,2,1))
+	plot(ave1, col="brown", type="l", ylab="Average Steps", xlab="5 Minute Interval")
+	title(main="Weekdays")
+	plot(ave2, col="brown", type="l", ylab="Average Steps", xlab="5 Minute Interval")
+	title(main="Weekends")
+```
 
 
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+There is a relative difference between weekdays and weekends. People tend to walk or make steps during the morning (evidenced by the intervals between 800 and 1000 ). Also, the highest average steps taken in an interval during weekdays is 150 and 100 for the weekends. This is due to the fact that people tend to walk during the peak hours or rush hours such as going to work or school and/or having a morning exercise at the park or gym. 
