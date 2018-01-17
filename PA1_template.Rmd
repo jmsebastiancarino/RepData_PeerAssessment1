@@ -51,6 +51,8 @@ The peak or maximum of the average number of steps taken is on the interval betw
 	missing <- sum(is.na(md))
 ```
 The total number of rows with missing values is `r missing`.
+
+The strategy used in filling the missing values is by using na.aggregate. na.aggregate is a generic function in the zoo package where it replaces NA values with aggregated values such as overall means, by monthly means, etc. 
 ```{r NA replacement, echo=TRUE, results="hide", cache=TRUE}
 ##Create New Data Set
 	md2 <- md

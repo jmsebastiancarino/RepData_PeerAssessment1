@@ -195,6 +195,7 @@ dev.off()</code></pre>
     ##Total Number of Rows with Missing Values
     missing &lt;- sum(is.na(md))</code></pre>
 <p>The total number of rows with missing values is 2304.</p>
+<p>The strategy used in filling the missing values is by using na.aggregate. na.aggregate is a generic function in the zoo package where it replaces NA values with aggregated values such as overall means, by monthly means, etc.</p>
 <pre class="r"><code>##Create New Data Set
     md2 &lt;- md
 
