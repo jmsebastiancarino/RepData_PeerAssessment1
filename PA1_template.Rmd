@@ -16,7 +16,9 @@ mean <- with(md, tapply(steps, date, na.rm=TRUE, FUN=mean))
 median <- with(md, tapply(steps, date, na.rm=TRUE, FUN=median))
 
 ##Making the histogram and showing the mean per day
+png(file="figure0.png")
 hist(total, col="green", main="Total Number of Steps Taken")
+dev.off()
 ```
 
 
@@ -30,7 +32,9 @@ mean
 ave <- with(md, aggregate(steps, list(interval), na.rm=TRUE, FUN=mean))
 
 ##Plotting the average
+png(file="figure1.png")
 plot(ave, col="brown", type="l", ylab="Average Steps", xlab="5 Minute Interval")
+dev.off()
 ```
 
 
@@ -64,7 +68,9 @@ mean2 <- with(md2, tapply(steps, date, FUN=mean))
 median2 <- with(md2, tapply(steps, date, FUN=median))
 
 ##Plotting the total number of steps taken
+png(file="figure2.png")
 hist(total2, col="green", main="Total Number of Steps Taken")
+dev.off()
 ```
 
 The insertion of values in place of NA values has increased the total daily number of steps taken. The difference can be seen from the left side and the middle of the new histogram as the frequency has increased from 25 to 35 while the right side has little increase.  
@@ -95,11 +101,13 @@ The insertion of values in place of NA values has increased the total daily numb
 	ave2 <- with(End, aggregate(steps, list(interval), na.rm=TRUE, FUN=mean))
 
 ##Plotting the mean of weekends and weekdays
+	png(file="figure3.png")
 	par(mfrow=c(2,1), mar=c(4,4,2,1))
 	plot(ave1, col="brown", type="l", ylab="Average Steps", xlab="5 Minute Interval")
 	title(main="Weekdays")
 	plot(ave2, col="brown", type="l", ylab="Average Steps", xlab="5 Minute Interval")
 	title(main="Weekends")
+	dev.off()
 ```
 
 
